@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStudentStore } from "~/stores/studentStore";
+import { ref } from "vue";
 
 const props = defineProps<{
   label: string;
@@ -7,32 +8,34 @@ const props = defineProps<{
 }>();
 
 const isOpen = ref(false);
+
+// Преобразуем дату из ISO в формат YYYY-MM-DD
+const formatDate = (isoDate: string) => {
+  return isoDate ? isoDate.split("T")[0] : "";
+};
+
 const formData = ref({
   fullName: props.student.fullName,
-  birthDate: props.student.birthDate,
+  birthDate: formatDate(props.student.birthDate), // Форматируем дату
   class: props.student.class,
 });
 
 const studentStore = useStudentStore();
 
 // Функция для отправки данных на сервер
-const createStudent = async () => {
+const updateStudent = async () => {
   try {
-    await studentStore.updateStudent(props.student.id, formData);
-
-    isOpen.value = false;
-
-    // Очищаем форму
-    formData.value = {
-      fullName: "",
-      birthDate: "",
-      class: "",
+    // Преобразуем дату обратно в ISO перед отправкой
+    const dataToSend = {
+      ...formData.value,
+      birthDate: new Date(formData.value.birthDate).toISOString(),
     };
 
-    // Можно добавить уведомление об успешном создании
-    console.log("Студент создан:");
+    await studentStore.updateStudent(props.student.id, dataToSend);
+    isOpen.value = false;
+    console.log("Студент обновлен:");
   } catch (error) {
-    console.error("Ошибка при создании студента:", error);
+    console.error("Ошибка при обновлении студента:", error);
   }
 };
 </script>
@@ -56,9 +59,9 @@ const createStudent = async () => {
             size="2xs"
             color="primary"
             variant="solid"
-            label="Создать студента"
+            label="Обновить студента"
             :trailing="false"
-            @click="createStudent"
+            @click="updateStudent"
           />
         </div>
       </UModal>

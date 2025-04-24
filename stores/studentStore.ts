@@ -9,8 +9,7 @@ export const useStudentStore = defineStore("student", () => {
   // Загрузка студентов с сервера
   const fetchStudents = async () => {
     try {
-      const response = await $fetch("/api/students");
-      students.value = response;
+      students.value = await $fetch("/api/students");
     } catch (error) {
       console.error("Ошибка при загрузке студентов:", error);
     }

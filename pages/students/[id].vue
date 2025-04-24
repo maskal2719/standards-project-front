@@ -11,16 +11,17 @@
       <span>Наименование норматива: {{ normative.name }}</span>
       Результат:
       <UInput @blur="() => createResult(normative.id, 3)" v-model="result" />
-      <span>Оценка: {{ normative.grade }}</span>
+      <span>Оценка: {{ finalRes }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { formatDate } from "../../utils/transformDate";
+import { formatDate } from "~/utils/transformDate";
 
 const route = useRoute();
 const result = ref("");
+const finalRes = ref(0);
 
 const { data: normatives } = await useFetch("http://localhost:3001/normatives");
 const { data: student } = await useFetch(
@@ -45,6 +46,9 @@ const createResult = async (normativeId, quarter) => {
         normativeId: normativeId,
         quarter: quarter,
       }),
+    }).then((res) => {
+      console.log(res.grade.grade);
+      finalRes.value = res.grade.grade;
     });
 
     // Можно добавить уведомление об успешном создании

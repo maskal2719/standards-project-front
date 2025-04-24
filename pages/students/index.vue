@@ -1,6 +1,7 @@
 <template>
-  <div class="flex gap-4 flex-col m-4">
+  <div class="students">
     <div class="flex items-center gap-4">
+      <u-button>6А</u-button>
       <UInput
         v-model="searchQuery"
         class="w-full"
@@ -11,12 +12,13 @@
       />
       <Modal :label="'Добавить студента'" />
     </div>
-
-    <Students
-      v-for="student in filteredStudents"
-      :key="student.id"
-      :student="student"
-    />
+    <div class="students-container">
+      <Student
+        v-for="student in filteredStudents"
+        :key="student.id"
+        :student="student"
+      />
+    </div>
   </div>
 </template>
 
@@ -46,4 +48,15 @@ const filteredStudents = computed(() => {
 });
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.students {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.students-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+}
+</style>
